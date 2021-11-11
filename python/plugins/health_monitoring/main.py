@@ -32,7 +32,7 @@ def disk_informations():
 
 def temperature_informations():
 	print('TEMPERATURE INFORMATIONS:\n')
-	print(psutil.cpu_stats.__dict__)
+	print(f'Temperature: {psutil.sensors_temperatures()}C')
 
 if __name__ == '__main__':
 	cpu_informations()
