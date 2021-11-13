@@ -1,19 +1,17 @@
+// this is working correctly
 const mqtt = require('mqtt')
-const fs = require('fs')
 const { Command } = require('commander')
-
 const program = new Command()
+
 program
   .option('-p, --protocol <type>', 'connect protocol: ws, wss. default is mqtt', 'ws')
   .parse(process.argv)
 
 const host = 'localhost'
 const port = '9001'
-const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
 // connect options
 const OPTIONS = {
-  clientId,
   clean: true,
   connectTimeout: 4000,
   reconnectPeriod: 1000,
