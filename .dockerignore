@@ -1,0 +1,8 @@
+.git
+.gitignore
+README.md
+docker-compose.yml
+node/node_modules
+node/npm-debug.log
+LICENSE
+Dockerfile

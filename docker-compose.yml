@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+
+  nodejs:
+    build: ./node
+    container_name: nodejs
+    ports:
+      - "3000:3000"
+
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    ports:
+        - "1883:1883"
+        - "9001:9001"
+    volumes:
+        - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  python:
+    build: .
+    container_name: python
+    network_mode: host
+    ports:
+      - "2000:2000"
+    tty: true
+    command: python health_monitoring/publisher.py
+

@@ -7,10 +7,12 @@ app.use(express.urlencoded({
   extended: true
 }));
 
+const PORT = 3000;
+const HOST = '0.0.0.0';
+
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-server.listen(3000, function () {
-    console.log('App listening on port 3000!');
-});
+app.listen(PORT, HOST);
+console.log(`Running on http://${HOST}:${PORT}`);
