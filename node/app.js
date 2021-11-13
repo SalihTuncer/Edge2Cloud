@@ -11,6 +11,11 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/test', function (req, res) {
+    res.sendFile(__dirname + '/ws-mqtt.html');
+});
+
+
 server.listen(3000, function () {
     console.log('App listening on port 3000!');
 });
