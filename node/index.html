@@ -48,17 +48,17 @@
 
             // create data object with default value
             cpu_data = google.visualization.arrayToDataTable([
-                ["Year", "CPU Usage"],
+                ["Year", "Usage"],
                 [0,  0.0],]);
 
             // create options object with titles, colors, etc.
             cpu_options = {
-                title: "CPU Usage",
+                title: "CPU",
                 hAxis: {
                     title: "Time"
                 },
                 vAxis: {
-                    title: "Usage"
+                    title: "Usage in %"
                 }
             };
 
@@ -72,17 +72,17 @@
 
         function drawMEMChart() {
             mem_data = google.visualization.arrayToDataTable([
-                ["Year", "MEM Usage"],
-                [0,  0.0],]);
+                ["Year", "Usage", "Total"],
+                [0,  0.0, 0.0],]);
 
 
             mem_options = {
-                title: "Memory Usage",
+                title: "RAM",
                 hAxis: {
                     title: "Time"
                 },
                 vAxis: {
-                    title: "Usage"
+                    title: "Usage in GiB"
                 }
             };
             // draw chart on load
@@ -95,16 +95,16 @@
 
         function drawDISKChart() {
             disk_data = google.visualization.arrayToDataTable([
-                ["Year", "DISK Usage"],
-                [0,  0.0],]);
+                ["Year", "Read", "Write"],
+                [0,  0.0, 0.0],]);
 
             disk_options = {
-                title: "Disk Usage",
+                title: "DISK",
                 hAxis: {
                     title: "Time"
                 },
                 vAxis: {
-                    title: "Usage"
+                    title: "Usage in MiB"
                 }
             };
             // draw chart on load
@@ -153,12 +153,14 @@
 
         client.on('message', (topic, message, packet) => {
         console.log('Received Message: ' + message.toString() + '\nOn topic: ' + topic)
-        console.log(JSON.parse(message)[0].cpu_usage);
-        cpu_data.addRow([index, JSON.parse(message)[0].cpu_usage]);
+
+        message = JSON.parse(message)
+
+        cpu_data.addRow([index, message[0].cpu_usage]);
         cpu_chart.draw(cpu_data, cpu_options);
-        mem_data.addRow([index, JSON.parse(message)[1].used_mem]);
+        mem_data.addRow([index, message[1].used_mem, message[1].total_mem]);
         mem_chart.draw(mem_data, mem_options);
-        disk_data.addRow([index, JSON.parse(message)[2].disk_read]);
+        disk_data.addRow([index, message[2].disk_read, message[2].disk_write]);
         disk_chart.draw(disk_data, disk_options);
 
         index++;
