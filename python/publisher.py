@@ -11,7 +11,8 @@ source: https://stackoverflow.com/questions/1094841/get-human-readable-version-o
 def size_of(num, suffix='B'):
     for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
         if abs(num) < 1024.0:
-            return f'{num:3.1f}{unit}{suffix}'
+            # return f'{num:3.1f}{unit}{suffix}'
+            return float(f'{num:3.1f}')
         num /= 1024.0
     return f'{num:.1f}Yi{suffix}'
 

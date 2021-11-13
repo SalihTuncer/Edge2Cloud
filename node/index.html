@@ -1,45 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <title>Document</title>
-    <style>
-        #chart_div {
-            width: 1200px;
-        }
-        
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edge2Cloud</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 </head>
-
 <body>
+  <body>
     <!-- CONTAINER FOR CHART -->
-    <div id="chart_div"></div>
+    <div id="cpu_chart_div"></div>
+    <div id="mem_chart_div"></div>
+    <div id="disk_chart_div"></div>
+
     <script type="text/javascript" src="websocket_client.js"></script>
     <script type="text/javascript" loading="lazy" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-        /*
+        
+        
+        let cpu_data;
+        let mem_data;
+        let disk_data;
+
+        let cpu_options;
+        let mem_options;
+        let disk_options;
+
+        let cpu_chart;
+        let mem_chart;
+        let disk_chart;
+
+        let index = 0;
+
         // load current chart package
         google.charts.load("current", {
             packages: ["corechart", "line"]
         });
 
         // set callback function when api loaded
-        google.charts.setOnLoadCallback(drawChart);
+        google.charts.setOnLoadCallback(drawCPUChart);
 
-        function drawChart() {
+        google.charts.setOnLoadCallback(drawMEMChart);
+
+        google.charts.setOnLoadCallback(drawDISKChart);
+
+        function drawCPUChart() {
 
             // create data object with default value
-            let data = google.visualization.arrayToDataTable([
+            cpu_data = google.visualization.arrayToDataTable([
                 ["Year", "CPU Usage"],
                 [0,  0.0],]);
+
             // create options object with titles, colors, etc.
-            let options = {
+            cpu_options = {
                 title: "CPU Usage",
                 hAxis: {
                     title: "Time"
@@ -50,28 +63,110 @@
             };
 
             // draw chart on load
-            let chart = new google.visualization.LineChart(
-                document.getElementById("chart_div")
+            cpu_chart = new google.visualization.LineChart(
+                document.getElementById("cpu_chart_div")
             );
-            chart.draw(data, options);
+            cpu_chart.draw(cpu_data, cpu_options);
 
-            // interval for adding new data every 250ms
-            let index = 0;
-            
-            setInterval(function() {
-
-                // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
-                let random = Math.random() * 30 + 20;
-
-                data.addRow([index, random]);
-                chart.draw(data, options);
-
-                index++;
-            }, 250);
-            
         }
-        */
+
+        function drawMEMChart() {
+            mem_data = google.visualization.arrayToDataTable([
+                ["Year", "MEM Usage"],
+                [0,  0.0],]);
+
+
+            mem_options = {
+                title: "Memory Usage",
+                hAxis: {
+                    title: "Time"
+                },
+                vAxis: {
+                    title: "Usage"
+                }
+            };
+            // draw chart on load
+            mem_chart = new google.visualization.LineChart(
+                document.getElementById("mem_chart_div")
+            );
+            mem_chart.draw(mem_data, mem_options);
+
+        }
+
+        function drawDISKChart() {
+            disk_data = google.visualization.arrayToDataTable([
+                ["Year", "DISK Usage"],
+                [0,  0.0],]);
+
+            disk_options = {
+                title: "Disk Usage",
+                hAxis: {
+                    title: "Time"
+                },
+                vAxis: {
+                    title: "Usage"
+                }
+            };
+            // draw chart on load
+            disk_chart = new google.visualization.LineChart(
+                document.getElementById("disk_chart_div")
+            );
+            disk_chart.draw(disk_data, disk_options);
+        }
+        
+        const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
+
+        const host = 'ws://localhost:9001/mqtt'
+
+        const options = {
+        keepalive: 30,
+        protocolId: 'MQTT',
+        protocolVersion: 4,
+        clean: true,
+        reconnectPeriod: 1000,
+        connectTimeout: 30 * 1000,
+        will: {
+            topic: 'health_monitoring',
+            payload: 'Connection Closed abnormally..!',
+            qos: 0,
+            retain: false
+        },
+        rejectUnauthorized: false
+        }
+
+        console.log('connecting mqtt client')
+        const client = mqtt.connect(host, options)
+
+        client.on('error', (err) => {
+        console.log('Connection error: ', err)
+        client.end()
+        })
+
+        client.on('reconnect', () => {
+        console.log('Reconnecting...')
+        })
+
+        client.on('connect', () => {
+        console.log('Client connected:' + clientId)
+        client.subscribe('health_monitoring', { qos: 0 })
+        })
+
+        client.on('message', (topic, message, packet) => {
+        console.log('Received Message: ' + message.toString() + '\nOn topic: ' + topic)
+        console.log(JSON.parse(message)[0].cpu_usage);
+        cpu_data.addRow([index, JSON.parse(message)[0].cpu_usage]);
+        cpu_chart.draw(cpu_data, cpu_options);
+        mem_data.addRow([index, JSON.parse(message)[1].used_mem]);
+        mem_chart.draw(mem_data, mem_options);
+        disk_data.addRow([index, JSON.parse(message)[2].disk_read]);
+        disk_chart.draw(disk_data, disk_options);
+
+        index++;
+        })
+
+        client.on('close', () => {
+        console.log(clientId + ' disconnected')
+        })
     </script>
 </body>
-
 </html>
