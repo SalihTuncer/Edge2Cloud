@@ -43,8 +43,8 @@ def temperature_informations():
 
 if __name__ == '__main__':
 
-    client = mqtt.Client('publisher')
-    client.connect('localhost', 1883)
+    client = mqtt.Client(transport='websockets')
+    client.connect('localhost', 9001)
 
     interval = 1
 
