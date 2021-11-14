@@ -11,7 +11,7 @@ const PORT = 3000;
 const HOST = '0.0.0.0';
 
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/monitoring.html');
 });
 
 app.listen(PORT, HOST);

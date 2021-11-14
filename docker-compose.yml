@@ -25,5 +25,5 @@ services:
     ports:
       - "2000:2000"
     tty: true
-    command: python health_monitoring/publisher.py
+    command: python health_monitoring.py
 
