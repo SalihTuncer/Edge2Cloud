@@ -37,7 +37,7 @@ class mqtt_client:
 
     def publish(self, topic:str, data):
         self.client.publish(topic, data)
-        print(f'health_monitoring: {data}')
+        #print(f'health_monitoring: {data}')
 
     def subcribe(self, topic:str):
         self.client.subscribe(topic)

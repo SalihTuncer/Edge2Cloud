@@ -2,10 +2,12 @@ const express = require('express'),
     app = express(),
     server = require('http').createServer(app);
 
+app.use(express.static('node'));
 app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
+
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
