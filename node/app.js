@@ -1,19 +1,16 @@
-const express = require('express'),
-    app = express(),
-    server = require('http').createServer(app);
+const express = require('express');
+
+const app = express();
 
 app.use(express.static('node'));
 app.use(express.json());
-app.use(express.urlencoded({
-  extended: true
-}));
-
+app.use(express.urlencoded({ extended: true }));
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
 
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/monitoring.html');
+app.get('/', (req, res) => {
+  res.sendFile(`${__dirname}/monitoring.html`);
 });
 
 app.listen(PORT, HOST);

@@ -1,7 +1,6 @@
-version: '3'
+version: "3"
 
 services:
-
   nodejs:
     build: ./node
     container_name: nodejs
@@ -13,10 +12,10 @@ services:
     hostname: mosquitto
     container_name: mosquitto
     ports:
-        - "1883:1883"
-        - "9001:9001"
+      - "1883:1883"
+      - "9001:9001"
     volumes:
-        - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
   python:
     build: .
@@ -26,4 +25,3 @@ services:
       - "2000:2000"
     tty: true
     command: python health_monitoring.py
-
