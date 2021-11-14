@@ -47,7 +47,7 @@ function drawCPUChart() {
   };
 
   // draw chart on load
-  cpuChart = new google.visualization.LineChart(document.getElementById('cpuChart_div'));
+  cpuChart = new google.visualization.LineChart(document.getElementById('cpu_chart_div'));
   cpuChart.draw(cpuData, cpuOptions);
 }
 
@@ -76,7 +76,7 @@ function drawMEMChart() {
     },
   };
   // draw chart on load
-  memChart = new google.visualization.LineChart(document.getElementById('memChart_div'));
+  memChart = new google.visualization.LineChart(document.getElementById('mem_chart_div'));
   memChart.draw(memData, memOptions);
 }
 
@@ -111,7 +111,7 @@ function drawDISKChart() {
     },
   };
   // draw chart on load
-  diskChart = new google.visualization.LineChart(document.getElementById('diskChart_div'));
+  diskChart = new google.visualization.LineChart(document.getElementById('disk_chart_div'));
   diskChart.draw(diskData, diskOptions);
 }
 

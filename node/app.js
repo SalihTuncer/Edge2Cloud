@@ -2,9 +2,13 @@ const express = require('express');
 
 const app = express();
 
-app.use(express.static('node'));
+app.use(express.static(__dirname));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
