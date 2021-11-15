@@ -1,9 +1,10 @@
 import paho.mqtt.client as mqtt
+import time
 
 
 class mqtt_client:
 
-    def __init__(self, host='localhost', port=9001) -> None:
+    def __init__(self, host='localhost', port=9001, reconnect_interval=3) -> None:
 
         self.client = mqtt.Client(transport='websockets')
 
@@ -16,22 +17,27 @@ class mqtt_client:
         self.client.connected_flag = False
         self.client.disconnect_flag = True
 
+        self.__connect(host, port, reconnect_interval)
+
+    def __connect(self, host, port, reconnect_interval):
         try:
-            self.client.connect(host, port)  # connect to broker
+            # connect to broker
+            self.client.connect(host, port)
         except:
-            print('connection failed')
-            exit(1)
+            print('Connection failed. Trying again...')
+            time.sleep(reconnect_interval)
+            self.__connect(host, port, reconnect_interval)
 
     def __on_connect(self, client, userdata, flags, rc):
         if rc == 0:
             self.client.connected_flag = True
             self.client.disconnect_flag = False
-            print("connected OK")
+            print("Connected OK")
         else:
             print("Bad connection Returned code=", rc)
 
     def __on_disconnect(self, client, userdata, rc):
-        print("disconnecting reason  " + str(rc))
+        print("Disconnecting reason  " + str(rc))
         self.client.connected_flag = False
         self.client.disconnect_flag = True
 
@@ -41,7 +47,7 @@ class mqtt_client:
 
     def subcribe(self, topic: str):
         self.client.subscribe(topic)
-        print(f'subscribed: {topic}')
+        print(f'Subscribed: {topic}')
 
     def set_on_message(self, func):
         self.client.on_message = func

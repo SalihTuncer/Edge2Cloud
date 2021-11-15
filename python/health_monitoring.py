@@ -75,7 +75,7 @@ def on_message(client, userdata, message):
     # we just accept values in the following range: [publish_x, publish_y]
     if (value >= publish_x and value <= publish_y):
         publish_interval = value
-        print(f'interval changed to {publish_interval}')
+        print(f'Interval changed to {publish_interval}')
 
 
 if __name__ == '__main__':
