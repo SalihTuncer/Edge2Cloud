@@ -1,14 +1,28 @@
+from typing import Any, Dict
 from client.mqtt_client import mqtt_client
 
 import psutil
 import time
 import json
+import argparse
 
-publish_interval = 1
-# publish range from
-publish_x = 0.1
-# to
-publish_y = 100
+
+def parse_arguments() -> Dict[str, Any]:
+    parser = argparse.ArgumentParser(description='Description of your program')
+    parser.add_argument(
+        '-ho', '--host', help='address of host | default: localhost', default='localhost', type=str)
+    parser.add_argument(
+        '-p', '--port', help='network port | default: 9001', default=9001, type=int)
+    parser.add_argument(
+        '-ri', '--reconnect_interval', help='connecting to broker | default: 3', default=3, type=float)
+    parser.add_argument(
+        '-pi', '--publish_interval', help='publishing messages | default: 1', default=1, type=float)
+    parser.add_argument(
+        '-x', '--publish_x', help='publishing interval min | default: 0.1', default=0.1, type=float)
+    parser.add_argument(
+        '-y', '--publish_y', help='publishing interval max | default: 100.0', default=100.0, type=float)
+    return vars(parser.parse_args())
+
 
 '''
 Scale bytes to its proper format
@@ -16,7 +30,7 @@ source: https://stackoverflow.com/questions/1094841/get-human-readable-version-o
 '''
 
 
-def size_of(num, suffix='B'):
+def size_of(num: int, suffix='B'):
     for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
         if abs(num) < 1024.0:
             # return f'{num:3.1f}{unit}{suffix}'
@@ -30,7 +44,7 @@ def size_of(num, suffix='B'):
 '''
 
 
-def cpu_informations():
+def cpu_informations() -> None:
     return {
         'cpu_usage': psutil.cpu_percent(interval=0.025)
     }
@@ -41,7 +55,7 @@ def cpu_informations():
 '''
 
 
-def memory_informations():
+def memory_informations() -> None:
     mem = psutil.virtual_memory()
     return {
         'total_mem': size_of(mem.total),
@@ -54,7 +68,7 @@ def memory_informations():
 '''
 
 
-def disk_informations():
+def disk_informations() -> None:
     io_counters = psutil.disk_io_counters()
     return {
         'disk_read': size_of(io_counters.read_count),
@@ -68,22 +82,24 @@ def disk_informations():
 '''
 
 
-def on_message(client, userdata, message):
-    global publish_interval, publish_x, publish_y
-    value = float(message.payload.decode('utf-8'))
+def on_message(client, userdata, message) -> None:
+    global config
+    new_interval = float(message.payload.decode('utf-8'))
 
     # we just accept values in the following range: [publish_x, publish_y]
-    if (value >= publish_x and value <= publish_y):
-        publish_interval = value
-        print(f'Interval changed to {publish_interval}')
+    if (new_interval >= config['publish_x'] and new_interval <= config['publish_y']):
+        config['publish_interval'] = new_interval
+        print('Interval changed to', config['publish_interval'])
 
 
 if __name__ == '__main__':
+    # contains essential configurations for the mqtt client
+    global config
 
-    host = 'localhost'
-    port = 9001
+    config = parse_arguments()
 
-    client = mqtt_client(host, port)
+    client = mqtt_client(config['host'], config['port'],
+                         config['reconnect_interval'])
 
     # subscribe so we can react to interval changes
     client.subcribe('health_monitoring_interval')
@@ -99,4 +115,4 @@ if __name__ == '__main__':
         # publish our JSON-object to the broker
         client.publish('health_monitoring', stats)
         # wait {publish_interval} seconds
-        time.sleep(publish_interval)
+        time.sleep(config['publish_interval'])
