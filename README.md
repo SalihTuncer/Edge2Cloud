@@ -16,6 +16,8 @@ Web-App with Node.js which shows the statistics of your device via MQTT and pyth
 ### Project Organization
 
       .
+      ├── Architecture.drawio
+      ├── Architecture.pdf
       ├── Dockerfile
       ├── LICENSE
       ├── README.md
@@ -25,22 +27,29 @@ Web-App with Node.js which shows the statistics of your device via MQTT and pyth
       ├── node
       │   ├── Dockerfile
       │   ├── app.js
-      │   ├── index.html
+      │   ├── js
+      │   │   └── health_monitoring.js
+      │   ├── monitoring.html
       │   ├── package-lock.json
       │   └── package.json
       ├── python
-      │   └── health_monitoring
-      │       └── publisher.py
+      │   ├── client
+      │   │   ├── __pycache__
+      │   │   │   └── mqtt_client.cpython-39.pyc
+      │   │   └── mqtt_client.py
+      │   └── health_monitoring.py
       └── requirements.txt
 
-      4 directories, 12 files
+      6 directories, 17 files
 
 ### SLOC
 
-      17 node/app.js
-     173 node/index.html
-      60 python/health_monitoring/publisher.py
-     270 total
+      22 ./node/monitoring.html
+     208 ./node/js/health_monitoring.js
+      21 ./node/app.js
+     118 ./python/health_monitoring.py
+      55 ./python/client/mqtt_client.py
+     424 total
 
-state: 11/13/2021
+state: 11/15/2021
 
