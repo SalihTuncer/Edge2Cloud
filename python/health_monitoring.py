@@ -58,7 +58,7 @@ def cpu_informations() -> None:
 def memory_informations() -> None:
     mem = psutil.virtual_memory()
     return {
-        'total_mem': size_of(mem.total),
+        # 'total_mem': size_of(mem.total),
         'used_mem': size_of(mem.used)
     }
 
@@ -84,7 +84,10 @@ def disk_informations() -> None:
 
 def on_message(client, userdata, message) -> None:
     global config
-    new_interval = float(message.payload.decode('utf-8'))
+    try:
+        new_interval = float(message.payload.decode('utf-8'))
+    except ValueError:
+        return
 
     # we just accept values in the following range: [publish_x, publish_y]
     if (new_interval >= config['publish_x'] and new_interval <= config['publish_y']):

@@ -54,8 +54,8 @@ function drawCPUChart() {
 // a chart which shows the usage and total memory of the disk of the corresponding device
 function drawMEMChart() {
   memData = google.visualization.arrayToDataTable([
-    ['Year', 'Usage', 'Capacity'],
-    [0, 0.0, 0.0],
+    ['Year', 'Usage'], // 'Capacity'],
+    [0, 0.0], // 0.0],
   ]);
 
   memOptions = {
@@ -95,7 +95,7 @@ function drawDISKChart() {
     vAxis: {
       title: '',
     },
-    trendlines: {
+    /*trendlines: {
       0: {
         color: 'blue',
         labelInLegend: 'r-trend',
@@ -108,7 +108,7 @@ function drawDISKChart() {
         visibleInLegend: true,
         opacity: 0.4,
       },
-    },
+    },*/
   };
   // draw chart on load
   diskChart = new google.visualization.LineChart(document.getElementById('disk_chart_div'));
@@ -161,7 +161,7 @@ client.on('message', (topic, message, packet) => {
 
   cpuData.addRow([index, data[0].cpu_usage]);
   cpuChart.draw(cpuData, cpuOptions);
-  memData.addRow([index, data[1].used_mem[0], data[1].total_mem[0]]);
+  memData.addRow([index, data[1].used_mem[0]]); //, data[1].total_mem[0]]);
   memChart.draw(memData, memOptions);
   diskData.addRow([index, data[2].disk_read[0], data[2].disk_write[0]]);
   diskChart.draw(diskData, diskOptions);
